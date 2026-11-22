@@ -8,6 +8,9 @@ import { LoginPage } from "./pages/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { OnboardingPage } from "./pages/OnboardingPage";
 import { DashboardPlaceholder } from "./pages/DashboardPlaceholder";
+import { CustomersPage } from "./pages/CustomersPage";
+import { InvoicesPage } from "./pages/InvoicesPage";
+import { ExpensesPage } from "./pages/ExpensesPage";
 import { AdminPage } from "./pages/AdminPage";
 
 /**
@@ -19,9 +22,12 @@ import { AdminPage } from "./pages/AdminPage";
  * ProtectedRoute   — auth check only (unchanged)
  *   BusinessProvider + BusinessGate — business-profile check
  *     /onboarding  — first-time setup
- *     /dashboard   — main app (placeholder until Feature 05)
+ *     /dashboard   — main dashboard
+ *     /customers   — customer management
+ *     /invoices    — invoice creation & payment recording
+ *     /expenses    — expense management (one-time & recurring)
+ *     /payments    — redirects to /invoices
  *   /              — redirects to /dashboard
- *                   (satisfies PublicOnlyRoute → "/" → "/dashboard" chain)
  *
  * *            — catch-all → "/"
  */
@@ -32,8 +38,6 @@ export default function App() {
         <Routes>
           {/* ----------------------------------------------------------------
               Public-only routes — unauthenticated users only.
-              PublicOnlyRoute.tsx is not modified; it redirects to "/",
-              which in turn redirects to "/dashboard" below.
           ---------------------------------------------------------------- */}
           <Route element={<PublicOnlyRoute />}>
             <Route path="/login" element={<LoginPage />} />
@@ -42,7 +46,6 @@ export default function App() {
 
           {/* ----------------------------------------------------------------
               Auth-protected routes.
-              ProtectedRoute.tsx is not modified; it handles auth only.
           ---------------------------------------------------------------- */}
           <Route element={<ProtectedRoute />}>
             <Route path="/admin" element={<AdminPage />} />
@@ -58,13 +61,14 @@ export default function App() {
             >
               <Route path="/onboarding" element={<OnboardingPage />} />
               <Route path="/dashboard" element={<DashboardPlaceholder />} />
-              {/* Future feature routes (customers, invoices, expenses, etc.)
-                  will be added here as siblings. */}
+              <Route path="/customers" element={<CustomersPage />} />
+              <Route path="/invoices" element={<InvoicesPage />} />
+              <Route path="/expenses" element={<ExpensesPage />} />
+              <Route path="/payments" element={<Navigate to="/invoices" replace />} />
             </Route>
 
             {/* Root redirect — authenticated users land here from
-                PublicOnlyRoute's default redirect. BusinessGate is not
-                involved; the redirect happens before the profile check. */}
+                PublicOnlyRoute's default redirect. */}
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
           </Route>
 

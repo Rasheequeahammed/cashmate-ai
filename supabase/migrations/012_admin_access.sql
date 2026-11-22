@@ -7,7 +7,7 @@ create table if not exists public.admin_users (
 );
 
 grant usage on schema public to authenticated;
-grant select, insert, update on table public.businesses to authenticated;
+grant select on table public.businesses to authenticated;
 
 alter table public.admin_users enable row level security;
 revoke all on table public.admin_users from anon, authenticated;

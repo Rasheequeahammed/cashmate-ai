@@ -43,7 +43,7 @@ This repository is a JavaScript/TypeScript project. `requirements.txt` is includ
 
    These values are required when the app starts. Do not put a Supabase service role key or other secret in a `VITE_` variable; Vite exposes those variables to browser code.
 
-3. Apply the migrations in `supabase/migrations/` in order. The first creates the `businesses` table and owner policies. The second adds secure administrator access and the read-only admin query policy.
+3. Apply the migrations in `supabase/migrations/` in order. They create the business, customer, invoice, payment, and expense data model with row-level security. Migration `012_admin_access.sql` adds the read-only admin query policy.
 
 4. Start the development server:
 
@@ -66,7 +66,10 @@ This repository is a JavaScript/TypeScript project. `requirements.txt` is includ
 | `/login` | Signed out | Sign in to an existing account |
 | `/register` | Signed out | Create an account |
 | `/onboarding` | Signed in | Create the user's business profile |
-| `/dashboard` | Signed in with a business profile | Dashboard placeholder |
+| `/dashboard` | Signed in with a business profile | Financial dashboard |
+| `/customers` | Signed in with a business profile | Customer management |
+| `/invoices` | Signed in with a business profile | Invoices and payment recording |
+| `/expenses` | Signed in with a business profile | One-time and recurring expense management |
 | `/admin` | Signed in and explicitly assigned admin | Read-only business profile administration |
 
 Unknown routes redirect to the application root, which routes signed-in users to the dashboard.
@@ -79,7 +82,7 @@ src/
   contexts/         Supabase auth and business profile state
   hooks/            Context access hooks
   lib/              Supabase client, utilities, business types
-  pages/            Login, registration, onboarding, dashboard placeholder
+  pages/            Login, registration, onboarding, dashboard, admin, customers, invoices, expenses
 supabase/
   migrations/       Database schema and row-level security policies
 PRD.md              Product requirements and roadmap
@@ -91,7 +94,7 @@ Read [PRD.md](PRD.md) for the full product scope, database design, financial rul
 
 ## Provision the first administrator
 
-Administrator access is not granted by frontend configuration. After applying both migrations and creating the intended account through the normal registration flow, use the Supabase SQL Editor as a trusted project owner to assign that user's Auth UUID:
+Administrator access is not granted by frontend configuration. After applying `012_admin_access.sql` and creating the intended account through the normal registration flow, use the Supabase SQL Editor as a trusted project owner to assign that user's Auth UUID:
 
 ```sql
 insert into public.admin_users (user_id)
@@ -99,4 +102,4 @@ select id from auth.users where email = 'admin@example.com'
 on conflict (user_id) do nothing;
 ```
 
-Replace the email with the account to authorize. The account can then open `/admin` or use the administration link on the dashboard. The current admin page is read-only and only covers business profiles because those are the only business records implemented in this repository. Supabase RLS independently enforces admin checks for cross-account reads.
+Replace the email with the account to authorize. The account can then open `/admin` or use the administration link in the app navigation. The current admin page is read-only and covers business profiles; the other business data tables are not included in its views yet. Supabase RLS independently enforces admin checks for cross-account reads.
