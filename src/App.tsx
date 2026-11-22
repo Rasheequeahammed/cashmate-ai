@@ -10,6 +10,7 @@ import { OnboardingPage } from "./pages/OnboardingPage";
 import { DashboardPlaceholder } from "./pages/DashboardPlaceholder";
 import { CustomersPage } from "./pages/CustomersPage";
 import { InvoicesPage } from "./pages/InvoicesPage";
+import { ExpensesPage } from "./pages/ExpensesPage";
 
 /**
  * Route tree
@@ -23,6 +24,7 @@ import { InvoicesPage } from "./pages/InvoicesPage";
  *     /dashboard   — main dashboard
  *     /customers   — customer management
  *     /invoices    — invoice creation & payment recording
+ *     /expenses    — expense management (one-time & recurring)
  *     /payments    — redirects to /invoices
  *   /              — redirects to /dashboard
  *
@@ -59,6 +61,7 @@ export default function App() {
               <Route path="/dashboard" element={<DashboardPlaceholder />} />
               <Route path="/customers" element={<CustomersPage />} />
               <Route path="/invoices" element={<InvoicesPage />} />
+              <Route path="/expenses" element={<ExpensesPage />} />
               <Route path="/payments" element={<Navigate to="/invoices" replace />} />
             </Route>
 

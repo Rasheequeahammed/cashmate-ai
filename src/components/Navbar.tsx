@@ -8,6 +8,7 @@ export function Navbar() {
     { name: "Dashboard", href: "/dashboard" },
     { name: "Customers", href: "/customers" },
     { name: "Invoices", href: "/invoices" },
+    { name: "Expenses", href: "/expenses" },
   ];
 
   return (
