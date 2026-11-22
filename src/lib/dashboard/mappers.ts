@@ -24,10 +24,12 @@ export interface RawInvoice {
   customer?: RawCustomerJoin | null;
   customers?: RawCustomerJoin | null;
   customer_name?: string | null;
+  customer_phone?: string | null;
 }
 
 export interface DashboardInvoiceRow extends InvoiceRow {
   customer_name: string;
+  customer_phone: string | null;
 }
 
 export interface RawPayment {
@@ -106,6 +108,7 @@ export function mapInvoice(raw: RawInvoice): DashboardInvoiceRow {
     amount_paid_paise: toPaise(raw.amount_paid),
     outstanding_paise: toPaise(raw.outstanding_balance),
     customer_name: customerName,
+    customer_phone: raw.customer_phone ?? null,
   };
 }
 

@@ -213,6 +213,7 @@ export function ActionableAlertsSection({
                           invoiceId: alert.invoiceId,
                           invoiceNumber: alert.invoiceNumber,
                           customerName: alert.customerName,
+                          customerPhone: alert.customerPhone,
                           outstandingPaise: alert.outstandingPaise,
                           dueDate: alert.dueDate,
                           businessName,

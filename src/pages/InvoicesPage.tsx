@@ -32,6 +32,7 @@ interface InvoiceRecord {
   notes: string | null;
   created_at: string;
   customer_name?: string;
+  customer_phone?: string | null;
 }
 
 interface LineItemInput {
@@ -117,22 +118,23 @@ export function InvoicesPage() {
         new Set(rawInvoices.map((i) => i.customer_id).filter(Boolean)),
       );
 
-      const customerMap = new Map<string, string>();
+      const customerMap = new Map<string, { name: string; phone: string | null }>();
       if (customerIds.length > 0) {
         const { data: custData } = await supabase
           .from("customers")
-          .select("id, name")
+          .select("id, name, phone")
           .eq("business_id", business.id)
           .in("id", customerIds);
 
         for (const c of custData ?? []) {
-          customerMap.set(c.id, c.name);
+          customerMap.set(c.id, { name: c.name, phone: c.phone });
         }
       }
 
       return rawInvoices.map((inv) => ({
         ...inv,
-        customer_name: customerMap.get(inv.customer_id) ?? "Customer name unavailable",
+        customer_name: customerMap.get(inv.customer_id)?.name ?? "Customer name unavailable",
+        customer_phone: customerMap.get(inv.customer_id)?.phone ?? null,
       }));
     },
     enabled: Boolean(business?.id),
@@ -937,6 +939,7 @@ export function InvoicesPage() {
                                       invoiceId: inv.id,
                                       invoiceNumber: inv.invoice_number,
                                       customerName: inv.customer_name,
+                                      customerPhone: inv.customer_phone,
                                       outstandingPaise: Math.round(inv.outstanding_balance * 100),
                                       dueDate: inv.due_date,
                                       businessName: business?.name,

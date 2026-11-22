@@ -12,6 +12,7 @@ export interface AlertableInvoice {
   outstanding_paise: number;
   customer_name?: string | null;
   customer_id?: string | null;
+  customer_phone?: string | null;
 }
 
 export interface InvoiceAlert {
@@ -19,6 +20,7 @@ export interface InvoiceAlert {
   invoiceId: string;
   invoiceNumber: string;
   customerId?: string;
+  customerPhone?: string | null;
   customerName: string;
   dueDate: string;
   totalPaise: number;
@@ -88,6 +90,7 @@ export function getInvoiceAlerts(
         invoiceId: inv.id,
         invoiceNumber,
         customerId: inv.customer_id ?? undefined,
+        customerPhone: inv.customer_phone ?? null,
         customerName,
         dueDate: inv.due_date,
         totalPaise: inv.total_paise,
@@ -104,6 +107,7 @@ export function getInvoiceAlerts(
         invoiceId: inv.id,
         invoiceNumber,
         customerId: inv.customer_id ?? undefined,
+        customerPhone: inv.customer_phone ?? null,
         customerName,
         dueDate: inv.due_date,
         totalPaise: inv.total_paise,
@@ -120,6 +124,7 @@ export function getInvoiceAlerts(
         invoiceId: inv.id,
         invoiceNumber,
         customerId: inv.customer_id ?? undefined,
+        customerPhone: inv.customer_phone ?? null,
         customerName,
         dueDate: inv.due_date,
         totalPaise: inv.total_paise,

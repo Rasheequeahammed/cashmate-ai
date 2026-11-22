@@ -127,6 +127,7 @@ export function InvoiceList({
                             invoiceId: inv.id,
                             invoiceNumber: inv.invoice_number,
                             customerName: inv.customer_name,
+                            customerPhone: inv.customer_phone,
                             outstandingPaise: inv.outstanding_paise,
                             dueDate: inv.due_date,
                             businessName,

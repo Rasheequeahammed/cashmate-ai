@@ -4,12 +4,14 @@ import { todayIST } from "../../lib/finance/dateWindows";
 import { generatePaymentReminder, formatReadableDate } from "../../lib/finance/reminders";
 import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
-import { Copy, Check, X, RotateCcw, AlertCircle } from "lucide-react";
+import { Copy, Check, X, RotateCcw, AlertCircle, MessageCircle } from "lucide-react";
+import { normalizeInternationalPhone } from "../../lib/finance/phone";
 
 export interface ReminderInvoiceData {
   invoiceId: string;
   invoiceNumber: string;
   customerName?: string | null;
+  customerPhone?: string | null;
   outstandingPaise: number;
   dueDate: string;
   businessName?: string | null;
@@ -60,6 +62,10 @@ export function PaymentReminderModal({ invoice, onClose }: PaymentReminderModalP
 
   const isOverdue = invoice.dueDate < today;
   const isDueToday = invoice.dueDate === today;
+  const whatsappNumber = normalizeInternationalPhone(invoice.customerPhone);
+  const whatsappUrl = whatsappNumber
+    ? `https://wa.me/${whatsappNumber.slice(1)}?text=${encodeURIComponent(message)}`
+    : null;
 
   async function handleCopy() {
     setCopyFeedback(null);
@@ -222,7 +228,7 @@ export function PaymentReminderModal({ invoice, onClose }: PaymentReminderModalP
           <div className="flex items-start gap-2 rounded-lg bg-amber-50/70 p-2.5 border border-amber-200/80 text-[11px] text-amber-800">
             <AlertCircle className="h-4 w-4 shrink-0 mt-0.5 text-amber-600" />
             <span>
-              CASHMATE AI will never send emails, SMS, or WhatsApp messages automatically. Copy this reminder to share via your preferred channel.
+              WhatsApp opens with this draft filled in. Review it and tap Send in WhatsApp; CASHMATE AI does not send messages automatically.
             </span>
           </div>
 
@@ -236,6 +242,17 @@ export function PaymentReminderModal({ invoice, onClose }: PaymentReminderModalP
             >
               Close
             </Button>
+            {whatsappUrl && (
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-[40px] w-full items-center justify-center gap-2 rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-700 sm:w-auto"
+              >
+                <MessageCircle className="h-4 w-4" />
+                Open WhatsApp
+              </a>
+            )}
             <Button
               type="button"
               onClick={handleCopy}
@@ -258,6 +275,11 @@ export function PaymentReminderModal({ invoice, onClose }: PaymentReminderModalP
               )}
             </Button>
           </div>
+          {!whatsappUrl && (
+            <p className="text-xs text-amber-700">
+              Add the customer’s mobile number with its country code (for example, +91 98765 43210) on the Customers page to open this reminder in WhatsApp.
+            </p>
+          )}
         </CardContent>
       </Card>
     </div>

@@ -10,6 +10,7 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Alert, AlertDescription } from "../components/ui/alert";
+import { normalizeInternationalPhone } from "../lib/finance/phone";
 
 interface Customer {
   id: string;
@@ -35,6 +36,8 @@ export function CustomersPage() {
   const [address, setAddress] = useState("");
   const [formError, setFormError] = useState<string | null>(null);
   const [formSuccess, setFormSuccess] = useState<string | null>(null);
+  const [editingPhoneCustomerId, setEditingPhoneCustomerId] = useState<string | null>(null);
+  const [editingPhone, setEditingPhone] = useState("");
 
   const { data: customers = [], isLoading, isError, error } = useQuery({
     queryKey: ["customers", business?.id],
@@ -57,6 +60,10 @@ export function CustomersPage() {
       if (!business?.id) throw new Error("No active business selected.");
       const trimmedName = name.trim();
       if (!trimmedName) throw new Error("Customer name is required.");
+      const normalizedPhone = normalizeInternationalPhone(phone);
+      if (!normalizedPhone) {
+        throw new Error("Enter a valid mobile number with country code, such as +91 98765 43210.");
+      }
 
       const { data, error: insertErr } = await supabase
         .from("customers")
@@ -64,7 +71,7 @@ export function CustomersPage() {
           business_id: business.id,
           name: trimmedName,
           email: email.trim() || null,
-          phone: phone.trim() || null,
+          phone: normalizedPhone,
           address: address.trim() || null,
         })
         .select()
@@ -91,6 +98,35 @@ export function CustomersPage() {
     onError: (err: Error) => {
       setFormError(err.message);
     },
+  });
+
+  const updatePhoneMutation = useMutation({
+    mutationFn: async ({ customerId, phoneNumber }: { customerId: string; phoneNumber: string }) => {
+      if (!business?.id) throw new Error("No active business selected.");
+      const normalizedPhone = normalizeInternationalPhone(phoneNumber);
+      if (!normalizedPhone) {
+        throw new Error("Enter a valid mobile number with country code, such as +91 98765 43210.");
+      }
+
+      const { error: updateError } = await supabase
+        .from("customers")
+        .update({ phone: normalizedPhone })
+        .eq("id", customerId)
+        .eq("business_id", business.id);
+
+      if (updateError) throw new Error(updateError.message);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["customers", business?.id] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+      queryClient.invalidateQueries({ queryKey: ["invoices"] });
+      setEditingPhoneCustomerId(null);
+      setEditingPhone("");
+      setFormError(null);
+      setFormSuccess("Customer mobile number updated.");
+      setTimeout(() => setFormSuccess(null), 3000);
+    },
+    onError: (err: Error) => setFormError(err.message),
   });
 
   async function handleCreate(e: React.FormEvent) {
@@ -205,13 +241,19 @@ export function CustomersPage() {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="customer-phone">Phone (Optional)</Label>
+                    <Label htmlFor="customer-phone">
+                      Mobile number <span className="text-rose-500">*</span>
+                    </Label>
                     <Input
                       id="customer-phone"
+                      type="tel"
+                      autoComplete="tel"
                       placeholder="+91 98765 43210"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
+                      required
                     />
+                    <p className="text-xs text-slate-500">Include country code for WhatsApp reminders.</p>
                   </div>
                   <div className="space-y-1.5">
                     <Label htmlFor="customer-address">Address (Optional)</Label>
@@ -303,12 +345,68 @@ export function CustomersPage() {
                           {c.address && <span>{c.address}</span>}
                         </div>
                       </div>
-                      <div className="text-xs text-slate-400">
-                        Added {new Date(c.created_at).toLocaleDateString("en-IN")}
+                      <div className="flex flex-wrap items-center gap-2">
+                        {editingPhoneCustomerId === c.id ? (
+                          <form
+                            className="flex flex-wrap items-center gap-2"
+                            onSubmit={(event) => {
+                              event.preventDefault();
+                              setFormError(null);
+                              updatePhoneMutation.mutate({ customerId: c.id, phoneNumber: editingPhone });
+                            }}
+                          >
+                            <Input
+                              aria-label={`Mobile number for ${c.name}`}
+                              type="tel"
+                              autoComplete="tel"
+                              placeholder="+91 98765 43210"
+                              value={editingPhone}
+                              onChange={(event) => setEditingPhone(event.target.value)}
+                              required
+                              className="w-52"
+                            />
+                            <Button type="submit" size="sm" disabled={updatePhoneMutation.isPending}>
+                              Save
+                            </Button>
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="outline"
+                              onClick={() => {
+                                setEditingPhoneCustomerId(null);
+                                setEditingPhone("");
+                                setFormError(null);
+                              }}
+                            >
+                              Cancel
+                            </Button>
+                          </form>
+                        ) : (
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              setFormError(null);
+                              setEditingPhoneCustomerId(c.id);
+                              setEditingPhone(c.phone ?? "");
+                            }}
+                          >
+                            {c.phone ? "Edit mobile" : "Add mobile"}
+                          </Button>
+                        )}
+                        <div className="text-xs text-slate-400">
+                          Added {new Date(c.created_at).toLocaleDateString("en-IN")}
+                        </div>
                       </div>
                     </div>
                   ))}
                 </div>
+              )}
+              {formError && !isAdding && (
+                <Alert variant="destructive" className="mt-4">
+                  <AlertDescription>{formError}</AlertDescription>
+                </Alert>
               )}
             </CardContent>
           </Card>

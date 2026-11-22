@@ -53,13 +53,13 @@ export async function fetchInvoices(businessId: string): Promise<RawInvoice[]> {
     ),
   );
 
-  const customerMap = new Map<string, string>();
+  const customerMap = new Map<string, { name: string; phone: string | null }>();
 
   // Skip the customer query if there are no customer IDs
   if (customerIds.length > 0) {
     const { data: customersData, error: customersError } = await supabase
       .from("customers")
-      .select("id, name")
+      .select("id, name, phone")
       .eq("business_id", businessId)
       .in("id", customerIds);
 
@@ -69,7 +69,7 @@ export async function fetchInvoices(businessId: string): Promise<RawInvoice[]> {
 
     for (const customer of customersData ?? []) {
       if (customer.id && customer.name) {
-        customerMap.set(customer.id, customer.name);
+        customerMap.set(customer.id, { name: customer.name, phone: customer.phone });
       }
     }
   }
@@ -78,12 +78,13 @@ export async function fetchInvoices(businessId: string): Promise<RawInvoice[]> {
   return rawInvoices.map((inv) => {
     let customerName = "Customer name unavailable";
     if (inv.customer_id && customerMap.has(inv.customer_id)) {
-      customerName = customerMap.get(inv.customer_id)!;
+      customerName = customerMap.get(inv.customer_id)!.name;
     }
 
     return {
       ...inv,
       customer_name: customerName,
+      customer_phone: inv.customer_id ? customerMap.get(inv.customer_id)?.phone ?? null : null,
     };
   });
 }
