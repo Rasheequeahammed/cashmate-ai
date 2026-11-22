@@ -7,6 +7,7 @@ import { formatINR } from "../lib/finance/money";
 import { KpiCard } from "../components/dashboard/KpiCard";
 import { RevenueExpenseChart } from "../components/dashboard/RevenueExpenseChart";
 import { InvoiceList } from "../components/dashboard/InvoiceList";
+import { Navbar } from "../components/Navbar";
 import { Alert, AlertDescription } from "../components/ui/alert";
 import { Button } from "../components/ui/button";
 
@@ -20,7 +21,7 @@ function getSignOutError(err: unknown): string {
  * DashboardPlaceholder (Main Dashboard View)
  *
  * Full financial dashboard displaying:
- * - Business and user profile header with logout
+ * - Business and user profile header with navigation and logout
  * - 4 core financial KPI cards
  * - 6-month Revenue vs. Expenses chart
  * - 5 Recent invoices and 5 urgently overdue invoices
@@ -54,20 +55,24 @@ export function DashboardPlaceholder() {
       {/* ── Top Header Bar ─────────────────────────────────────────────── */}
       <header className="border-b border-slate-200 bg-white shadow-sm">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-          <div className="flex flex-col">
-            <div className="flex items-center gap-2">
-              <span className="text-xl font-bold tracking-tight text-slate-900">
-                CASHMATE AI
-              </span>
-              <span className="rounded bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-700">
-                Dashboard
-              </span>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
+            <div className="flex flex-col">
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-bold tracking-tight text-slate-900">
+                  CASHMATE AI
+                </span>
+                <span className="rounded bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-700">
+                  Dashboard
+                </span>
+              </div>
+              {business && (
+                <h1 className="mt-1 text-sm font-medium text-slate-600 sm:text-base">
+                  {business.name}
+                </h1>
+              )}
             </div>
-            {business && (
-              <h1 className="mt-1 text-lg font-medium text-slate-800">
-                {business.name}
-              </h1>
-            )}
+
+            <Navbar />
           </div>
 
           <div className="flex flex-wrap items-center gap-3">

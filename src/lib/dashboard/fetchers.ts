@@ -1,6 +1,28 @@
 import { supabase } from "../supabase";
 import type { RawInvoice, RawPayment, RawExpense } from "./mappers";
 
+export interface CustomerSummary {
+  id: string;
+  name: string;
+}
+
+/**
+ * Fetches all customers for a given business, sorted alphabetically by name.
+ */
+export async function fetchCustomers(businessId: string): Promise<CustomerSummary[]> {
+  const { data, error } = await supabase
+    .from("customers")
+    .select("id, name")
+    .eq("business_id", businessId)
+    .order("name", { ascending: true });
+
+  if (error) {
+    throw new Error(`Failed to fetch customers: ${error.message}`);
+  }
+
+  return (data as CustomerSummary[]) ?? [];
+}
+
 /**
  * Fetches all invoices for a given business.
  * Resolves customer names via a separate batch query to avoid unverified relationship embeds.
@@ -17,7 +39,7 @@ export async function fetchInvoices(businessId: string): Promise<RawInvoice[]> {
     .order("created_at", { ascending: false });
 
   if (invoicesError) {
-    throw new Error(`Failed to fetch invoices: ${invoicesError.message}`);
+    throw new Error(`Failed to fetch invoices: ${errorInvoices(invoicesError)}`);
   }
 
   const rawInvoices = invoicesData ?? [];
@@ -64,6 +86,10 @@ export async function fetchInvoices(businessId: string): Promise<RawInvoice[]> {
       customer_name: customerName,
     };
   });
+}
+
+function errorInvoices(err: { message: string }): string {
+  return err.message;
 }
 
 /**
