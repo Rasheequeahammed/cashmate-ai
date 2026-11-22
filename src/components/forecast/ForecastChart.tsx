@@ -146,25 +146,25 @@ export function ForecastChart({
             >
               <defs>
                 <linearGradient id="balanceGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#4f46e5" stopOpacity={0.25} />
-                  <stop offset="95%" stopColor="#4f46e5" stopOpacity={0.0} />
+                  <stop offset="5%" stopColor="#975b3e" stopOpacity={0.18} />
+                  <stop offset="95%" stopColor="#975b3e" stopOpacity={0.0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e6e1d6" />
               <XAxis
                 dataKey="label"
                 interval={interval}
                 tickLine={false}
-                stroke="#94a3b8"
+                stroke="#8d9488"
                 fontSize={12}
               />
               <YAxis
                 tickLine={false}
-                stroke="#94a3b8"
+                stroke="#8d9488"
                 fontSize={12}
                 tickFormatter={formatYAxisTick}
               />
-              <ReferenceLine y={0} stroke="#94a3b8" strokeDasharray="3 3" />
+              <ReferenceLine y={0} stroke="#8d9488" strokeDasharray="3 3" />
 
               {isSimulationActive && (
                 <Legend
@@ -257,7 +257,7 @@ export function ForecastChart({
                 type="monotone"
                 dataKey="balance"
                 name="Baseline Forecast"
-                stroke="#4f46e5"
+                stroke="#975b3e"
                 strokeWidth={2.5}
                 fillOpacity={1}
                 fill="url(#balanceGradient)"
@@ -269,7 +269,7 @@ export function ForecastChart({
                   type="monotone"
                   dataKey="simulatedBalance"
                   name="Simulated (15-Day Delay)"
-                  stroke="#d97706"
+                  stroke="#bd7655"
                   strokeWidth={2.5}
                   strokeDasharray="5 5"
                   fill="none"

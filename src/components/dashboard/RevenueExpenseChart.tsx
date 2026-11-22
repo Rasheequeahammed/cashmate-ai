@@ -62,16 +62,16 @@ export function RevenueExpenseChart({ data, className }: RevenueExpenseChartProp
                 data={chartData}
                 margin={{ top: 12, right: 12, left: 4, bottom: 4 }}
               >
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e6e1d6" />
                 <XAxis
                   dataKey="label"
                   tickLine={false}
-                  stroke="#94a3b8"
+                  stroke="#8d9488"
                   fontSize={12}
                 />
                 <YAxis
                   tickLine={false}
-                  stroke="#94a3b8"
+                  stroke="#8d9488"
                   fontSize={12}
                   tickFormatter={formatYAxisTick}
                 />
@@ -84,9 +84,9 @@ export function RevenueExpenseChart({ data, className }: RevenueExpenseChartProp
                   ]}
                   labelFormatter={(label) => `Month: ${label}`}
                   contentStyle={{
-                    backgroundColor: "#ffffff",
+                    backgroundColor: "#fffdf8",
                     borderRadius: "0.5rem",
-                    border: "1px solid #e2e8f0",
+                    border: "1px solid #e6e1d6",
                     boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
                     fontSize: "12px",
                   }}
@@ -104,14 +104,14 @@ export function RevenueExpenseChart({ data, className }: RevenueExpenseChartProp
                 <Bar
                   dataKey="revenue"
                   name="revenue"
-                  fill="#10b981"
+                  fill="#54785f"
                   radius={[4, 4, 0, 0]}
                   maxBarSize={40}
                 />
                 <Bar
                   dataKey="expenses"
                   name="expenses"
-                  fill="#f43f5e"
+                  fill="#bd7655"
                   radius={[4, 4, 0, 0]}
                   maxBarSize={40}
                 />
