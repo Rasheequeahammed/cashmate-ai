@@ -7,8 +7,8 @@ export default {
       colors: {
         white: "#fffdf8",
         slate: {
-          50: "#faf8f3",
-          100: "#f2efe7",
+          50: "#f3efe6",
+          100: "#eee9de",
           200: "#e6e1d6",
           300: "#d2cbbb",
           400: "#a5a99c",

@@ -102,6 +102,26 @@ export function DashboardPlaceholder() {
           </Alert>
         )}
 
+        <div className="flex flex-col gap-4 border-b border-slate-200 pb-5 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
+              {business?.name ?? "Your business"}
+            </p>
+            <h2 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
+              Financial overview
+            </h2>
+            <p className="mt-1 text-sm text-slate-600">
+              A clear view of money in, money out, and invoices that need attention.
+            </p>
+          </div>
+          <Button
+            onClick={() => navigate("/invoices")}
+            className="min-h-[44px] self-start px-5 sm:self-auto"
+          >
+            Create invoice
+          </Button>
+        </div>
+
         {/* Loading State */}
         {isLoading && (
           <div className="space-y-6">

@@ -43,6 +43,20 @@ export function ActionableAlertsSection({
     return allAlerts.filter((a) => a.severity === filter);
   }, [allAlerts, filter]);
 
+  if (allAlerts.length === 0) {
+    return (
+      <div className={`flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50/70 px-4 py-3 ${className}`}>
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-emerald-700">
+          <CheckCircle2 className="h-5 w-5" />
+        </div>
+        <div>
+          <p className="text-sm font-semibold text-slate-900">No invoices need attention</p>
+          <p className="text-xs text-slate-600">Your issued invoices are on schedule or fully paid.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <Card className={`border-slate-200 bg-white shadow-sm ${className}`}>
       <CardHeader className="pb-3 border-b border-slate-100">
@@ -125,17 +139,7 @@ export function ActionableAlertsSection({
       </CardHeader>
 
       <CardContent className="pt-4">
-        {allAlerts.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-slate-200 p-8 text-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 mb-2">
-              <CheckCircle2 className="h-6 w-6" />
-            </div>
-            <p className="font-semibold text-slate-800">All caught up!</p>
-            <p className="mt-1 text-xs text-slate-500 max-w-sm">
-              No invoices require immediate attention — all issued invoices are on schedule or fully settled.
-            </p>
-          </div>
-        ) : filteredAlerts.length === 0 ? (
+        {filteredAlerts.length === 0 ? (
           <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-slate-200 p-6 text-center text-sm text-slate-500">
             <p>No invoices matching the selected filter.</p>
           </div>
