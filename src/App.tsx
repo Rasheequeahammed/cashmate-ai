@@ -12,6 +12,8 @@ import { CustomersPage } from "./pages/CustomersPage";
 import { InvoicesPage } from "./pages/InvoicesPage";
 import { ExpensesPage } from "./pages/ExpensesPage";
 import { AdminPage } from "./pages/AdminPage";
+import { ForecastPage } from "./pages/ForecastPage";
+
 
 /**
  * Route tree
@@ -64,6 +66,7 @@ export default function App() {
               <Route path="/customers" element={<CustomersPage />} />
               <Route path="/invoices" element={<InvoicesPage />} />
               <Route path="/expenses" element={<ExpensesPage />} />
+              <Route path="/forecast" element={<ForecastPage />} />
               <Route path="/payments" element={<Navigate to="/invoices" replace />} />
             </Route>
 

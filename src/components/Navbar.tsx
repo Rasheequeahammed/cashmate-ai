@@ -7,11 +7,12 @@ export function Navbar() {
   const adminAccess = useAdminAccess();
 
   const links = [
-    { name: "Dashboard", href: "/dashboard" },
-    { name: "Customers", href: "/customers" },
-    { name: "Invoices", href: "/invoices" },
-    { name: "Expenses", href: "/expenses" },
-  ];
+  { name: "Dashboard", href: "/dashboard" },
+  { name: "Customers", href: "/customers" },
+  { name: "Invoices", href: "/invoices" },
+  { name: "Expenses", href: "/expenses" },
+  { name: "Forecast", href: "/forecast" },
+   ];
 
   return (
     <nav className="flex items-center gap-1 sm:gap-2">

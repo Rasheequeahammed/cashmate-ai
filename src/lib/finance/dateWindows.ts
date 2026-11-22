@@ -2,7 +2,7 @@ export const IST_TIME_ZONE = 'Asia/Kolkata';
 
 const MONTH_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] as const;
 
-interface YearMonthDay {
+export interface YearMonthDay {
   year: number;
   month: number;
   day: number;
@@ -25,16 +25,48 @@ function istParts(now: Date): YearMonthDay {
   return { year: read('year'), month: read('month'), day: read('day') };
 }
 
-function pad2(n: number): string {
+export function pad2(n: number): string {
   return String(n).padStart(2, '0');
 }
 
-function formatYmd(year: number, month: number, day: number): string {
+export function formatYmd(year: number, month: number, day: number): string {
   return `${year}-${pad2(month)}-${pad2(day)}`;
 }
 
-function daysInMonth(year: number, month: number): number {
+export function parseYmd(dateStr: string): YearMonthDay {
+  const [yearStr, monthStr, dayStr] = dateStr.split('-');
+  const year = Number(yearStr);
+  const month = Number(monthStr);
+  const day = Number(dayStr);
+  if (!year || !month || !day || Number.isNaN(year) || Number.isNaN(month) || Number.isNaN(day)) {
+    throw new Error(`Invalid date string: ${dateStr}`);
+  }
+  return { year, month, day };
+}
+
+export function daysInMonth(year: number, month: number): number {
   return new Date(Date.UTC(year, month, 0)).getUTCDate();
+}
+
+/**
+ * Adds an offset in days to a 'YYYY-MM-DD' date string.
+ * Uses Date.UTC to ensure deterministic calendar arithmetic.
+ */
+export function addDaysIST(dateStr: string, days: number): string {
+  const { year, month, day } = parseYmd(dateStr);
+  const d = new Date(Date.UTC(year, month - 1, day + days));
+  return formatYmd(d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate());
+}
+
+/**
+ * Difference in days between two 'YYYY-MM-DD' strings (b - a).
+ */
+export function diffDays(dateStrA: string, dateStrB: string): number {
+  const a = parseYmd(dateStrA);
+  const b = parseYmd(dateStrB);
+  const msA = Date.UTC(a.year, a.month - 1, a.day);
+  const msB = Date.UTC(b.year, b.month - 1, b.day);
+  return Math.round((msB - msA) / (24 * 3600 * 1000));
 }
 
 /** Today's date in IST as 'YYYY-MM-DD'. */
