@@ -13,6 +13,8 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Alert, AlertDescription } from "../components/ui/alert";
+import { PaymentReminderModal, type ReminderInvoiceData } from "../components/reminders/PaymentReminderModal";
+import { MessageSquare } from "lucide-react";
 import { cn } from "../lib/utils";
 
 interface InvoiceRecord {
@@ -69,6 +71,9 @@ export function InvoicesPage() {
   const [paymentNotes, setPaymentNotes] = useState("");
   const [paymentError, setPaymentError] = useState<string | null>(null);
   const [paymentSuccess, setPaymentSuccess] = useState<string | null>(null);
+
+  // Reminder Modal state
+  const [selectedReminderInvoice, setSelectedReminderInvoice] = useState<ReminderInvoiceData | null>(null);
 
   // 1. Fetch Customers using shared fetcher and unified queryKey
   const {
@@ -923,13 +928,33 @@ export function InvoicesPage() {
                             )}
 
                             {canRecordPayment && (
-                              <Button
-                                size="sm"
-                                onClick={() => openPaymentModal(inv)}
-                                className="min-h-[36px] bg-emerald-600 hover:bg-emerald-700 text-white"
-                              >
-                                Record Payment
-                              </Button>
+                              <>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() =>
+                                    setSelectedReminderInvoice({
+                                      invoiceId: inv.id,
+                                      invoiceNumber: inv.invoice_number,
+                                      customerName: inv.customer_name,
+                                      outstandingPaise: Math.round(inv.outstanding_balance * 100),
+                                      dueDate: inv.due_date,
+                                      businessName: business?.name,
+                                    })
+                                  }
+                                  className="min-h-[36px] border-indigo-200 text-indigo-700 hover:bg-indigo-50"
+                                >
+                                  <MessageSquare className="h-3.5 w-3.5 mr-1" />
+                                  Reminder
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  onClick={() => openPaymentModal(inv)}
+                                  className="min-h-[36px] bg-emerald-600 hover:bg-emerald-700 text-white"
+                                >
+                                  Record Payment
+                                </Button>
+                              </>
                             )}
                           </div>
                         </div>
@@ -941,6 +966,11 @@ export function InvoicesPage() {
             </CardContent>
           </Card>
         )}
+        {/* Payment Reminder Generator Modal */}
+        <PaymentReminderModal
+          invoice={selectedReminderInvoice}
+          onClose={() => setSelectedReminderInvoice(null)}
+        />
       </main>
     </div>
   );

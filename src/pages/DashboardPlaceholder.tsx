@@ -7,6 +7,8 @@ import { formatINR } from "../lib/finance/money";
 import { KpiCard } from "../components/dashboard/KpiCard";
 import { RevenueExpenseChart } from "../components/dashboard/RevenueExpenseChart";
 import { InvoiceList } from "../components/dashboard/InvoiceList";
+import { ActionableAlertsSection } from "../components/alerts/ActionableAlertsSection";
+import { PaymentReminderModal, type ReminderInvoiceData } from "../components/reminders/PaymentReminderModal";
 import { Navbar } from "../components/Navbar";
 import { Alert, AlertDescription } from "../components/ui/alert";
 import { Button } from "../components/ui/button";
@@ -33,6 +35,7 @@ export function DashboardPlaceholder() {
 
   const [logoutError, setLogoutError] = useState<string | null>(null);
   const [loggingOut, setLoggingOut] = useState(false);
+  const [selectedReminderInvoice, setSelectedReminderInvoice] = useState<ReminderInvoiceData | null>(null);
 
   const { data, isLoading, isError, error, refetch } = useDashboardData(
     business?.id,
@@ -177,6 +180,15 @@ export function DashboardPlaceholder() {
               />
             </section>
 
+            {/* Actionable Invoice Alerts */}
+            <section aria-label="Actionable Invoice Alerts">
+              <ActionableAlertsSection
+                invoices={data.invoices}
+                onSelectReminder={setSelectedReminderInvoice}
+                businessName={business?.name}
+              />
+            </section>
+
             {/* 6-Month Revenue vs Expenses Chart */}
             <section aria-label="Revenue vs Expenses Chart">
               <RevenueExpenseChart data={data.chartData} />
@@ -198,8 +210,16 @@ export function DashboardPlaceholder() {
                 invoices={data.overdueInvoices}
                 type="overdue"
                 emptyMessage="No overdue invoices — all accounts are up to date."
+                onSelectReminder={setSelectedReminderInvoice}
+                businessName={business?.name}
               />
             </section>
+
+            {/* Payment Reminder Generator Modal */}
+            <PaymentReminderModal
+              invoice={selectedReminderInvoice}
+              onClose={() => setSelectedReminderInvoice(null)}
+            />
           </>
         )}
       </main>

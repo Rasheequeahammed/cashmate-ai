@@ -1,9 +1,12 @@
 import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Button } from "../ui/button";
 import { formatINR } from "../../lib/finance/money";
 import { isOverdue } from "../../lib/finance/calculations";
 import { todayIST } from "../../lib/finance/dateWindows";
 import type { DashboardInvoiceRow } from "../../lib/dashboard/mappers";
+import type { ReminderInvoiceData } from "../reminders/PaymentReminderModal";
+import { MessageSquare } from "lucide-react";
 import { cn } from "../../lib/utils";
 
 export interface InvoiceListProps {
@@ -12,6 +15,8 @@ export interface InvoiceListProps {
   type: "recent" | "overdue";
   emptyMessage?: string;
   className?: string;
+  onSelectReminder?: (invoice: ReminderInvoiceData) => void;
+  businessName?: string;
 }
 
 export function InvoiceList({
@@ -20,6 +25,8 @@ export function InvoiceList({
   type,
   emptyMessage,
   className,
+  onSelectReminder,
+  businessName,
 }: InvoiceListProps) {
   const today = useMemo(() => todayIST(new Date()), []);
 
@@ -97,18 +104,40 @@ export function InvoiceList({
                     </p>
                   </div>
 
-                  <div className="text-left sm:text-right">
-                    <div className="font-semibold text-slate-900">
-                      {type === "overdue"
-                        ? formatINR(inv.outstanding_paise)
-                        : formatINR(inv.total_paise)}
+                  <div className="flex flex-col items-start sm:items-end gap-1.5 text-left sm:text-right">
+                    <div>
+                      <div className="font-semibold text-slate-900">
+                        {type === "overdue"
+                          ? formatINR(inv.outstanding_paise)
+                          : formatINR(inv.total_paise)}
+                      </div>
+                      {type === "overdue" &&
+                        inv.outstanding_paise < inv.total_paise && (
+                          <p className="text-xs text-slate-400">
+                            Total: {formatINR(inv.total_paise)}
+                          </p>
+                        )}
                     </div>
-                    {type === "overdue" &&
-                      inv.outstanding_paise < inv.total_paise && (
-                        <p className="text-xs text-slate-400">
-                          Total: {formatINR(inv.total_paise)}
-                        </p>
-                      )}
+                    {type === "overdue" && onSelectReminder && inv.outstanding_paise > 0 && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() =>
+                          onSelectReminder({
+                            invoiceId: inv.id,
+                            invoiceNumber: inv.invoice_number,
+                            customerName: inv.customer_name,
+                            outstandingPaise: inv.outstanding_paise,
+                            dueDate: inv.due_date,
+                            businessName,
+                          })
+                        }
+                        className="h-7 px-2 text-xs border-indigo-200 text-indigo-700 hover:bg-indigo-50"
+                      >
+                        <MessageSquare className="h-3 w-3 mr-1" />
+                        Reminder
+                      </Button>
+                    )}
                   </div>
                 </div>
               );
