@@ -1,0 +1,4 @@
+# CASHMATE AI is a React/TypeScript application, not a Python application.
+# Python packages are not required. Install JavaScript dependencies with:
+#   npm install
+# The authoritative JavaScript dependency lists are package.json and package-lock.json.

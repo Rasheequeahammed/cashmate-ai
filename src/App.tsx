@@ -8,6 +8,7 @@ import { LoginPage } from "./pages/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { OnboardingPage } from "./pages/OnboardingPage";
 import { DashboardPlaceholder } from "./pages/DashboardPlaceholder";
+import { AdminPage } from "./pages/AdminPage";
 
 /**
  * Route tree
@@ -44,6 +45,7 @@ export default function App() {
               ProtectedRoute.tsx is not modified; it handles auth only.
           ---------------------------------------------------------------- */}
           <Route element={<ProtectedRoute />}>
+            <Route path="/admin" element={<AdminPage />} />
             {/* Business-profile subtree:
                 BusinessProvider supplies the context;
                 BusinessGate enforces the onboarding redirect. */}

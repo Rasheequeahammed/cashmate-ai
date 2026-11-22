@@ -4,6 +4,8 @@ import { useAuth } from "../hooks/useAuth";
 import { useBusiness } from "../hooks/useBusiness";
 import { Alert, AlertDescription } from "../components/ui/alert";
 import { Button } from "../components/ui/button";
+import { Link } from "react-router-dom";
+import { useAdminAccess } from "../hooks/useAdminAccess";
 
 function getSignOutError(err: unknown): string {
   return err instanceof Error && err.message
@@ -22,6 +24,7 @@ function getSignOutError(err: unknown): string {
  */
 export function DashboardPlaceholder() {
   const { user, signOut } = useAuth();
+  const adminAccess = useAdminAccess();
   const { business } = useBusiness();
   const navigate = useNavigate();
 
@@ -49,6 +52,12 @@ export function DashboardPlaceholder() {
       )}
 
       <p className="text-slate-600">Signed in as {user?.email ?? ""}</p>
+
+      {adminAccess === "admin" && (
+        <Link to="/admin" className="text-sm font-medium text-slate-900 underline underline-offset-4">
+          Open administration
+        </Link>
+      )}
 
       <p className="max-w-md text-sm text-slate-500">
         Dashboard placeholder — full dashboard (KPI cards, charts, recent
