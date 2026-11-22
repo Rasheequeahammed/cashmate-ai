@@ -1,6 +1,6 @@
 # CASHMATE AI
 
-CASHMATE AI is a browser-based financial management application for small businesses. The current repository contains the Vite/React frontend, Supabase authentication and business onboarding, and the initial database migration. The dashboard is currently a placeholder; the broader product scope is documented in [PRD.md](PRD.md).
+CASHMATE AI is a browser-based financial management application for small businesses. It supports customer records, invoicing and payments, expense tracking, dashboard reporting, and cash-flow forecasts with what-if scenarios. Supabase provides authentication and data storage; row-level security protects business data.
 
 ## Current functionality
 
@@ -8,7 +8,10 @@ CASHMATE AI is a browser-based financial management application for small busine
 - Require authentication for application routes.
 - Guide new users through business profile onboarding.
 - Store each user's business profile in Supabase with row-level security.
-- Redirect users to the dashboard after onboarding. The dashboard is not yet implemented.
+- Manage customers, invoices, payments, one-time expenses, and recurring expense schedules.
+- Review dashboard KPIs and revenue-versus-expense history.
+- Forecast cash flow over 30, 60, or 90 days, review forecast assumptions, and simulate changes such as delayed customer payments.
+- Use a role-protected, read-only admin view of business profiles.
 
 ## Technology
 
@@ -16,6 +19,7 @@ CASHMATE AI is a browser-based financial management application for small busine
 - Vite 5
 - React Router 6
 - Tailwind CSS 3
+- TanStack Query 5 and Recharts 3
 - Supabase JavaScript client for authentication and database access
 
 This repository is a JavaScript/TypeScript project. `requirements.txt` is included for tooling that expects the filename, but no Python packages are required. Use `package.json` and `package-lock.json` for the application dependencies.
@@ -70,6 +74,7 @@ This repository is a JavaScript/TypeScript project. `requirements.txt` is includ
 | `/customers` | Signed in with a business profile | Customer management |
 | `/invoices` | Signed in with a business profile | Invoices and payment recording |
 | `/expenses` | Signed in with a business profile | One-time and recurring expense management |
+| `/forecast` | Signed in with a business profile | 30/60/90-day forecast and what-if simulations |
 | `/admin` | Signed in and explicitly assigned admin | Read-only business profile administration |
 
 Unknown routes redirect to the application root, which routes signed-in users to the dashboard.
@@ -78,11 +83,11 @@ Unknown routes redirect to the application root, which routes signed-in users to
 
 ```text
 src/
-  components/       Shared route guards and UI components
+  components/       Shared UI, dashboard, and forecast components
   contexts/         Supabase auth and business profile state
   hooks/            Context access hooks
-  lib/              Supabase client, utilities, business types
-  pages/            Login, registration, onboarding, dashboard, admin, customers, invoices, expenses
+  lib/              Supabase client, finance calculations, utilities, business types
+  pages/            Login, registration, onboarding, dashboard, admin, customers, invoices, expenses, forecast
 supabase/
   migrations/       Database schema and row-level security policies
 PRD.md              Product requirements and roadmap
@@ -90,7 +95,7 @@ PRD.md              Product requirements and roadmap
 
 ## Product specification
 
-Read [PRD.md](PRD.md) for the full product scope, database design, financial rules, security requirements, and roadmap. It describes planned features beyond what is currently implemented in this repository.
+Read [PRD.md](PRD.md) for the product scope, database design, financial rules, security requirements, and roadmap. Some planned AI and future-scope features are not implemented yet.
 
 ## Provision the first administrator
 
